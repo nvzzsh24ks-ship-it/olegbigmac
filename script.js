@@ -8,8 +8,8 @@ let score = 0
 let speed = 6
 let bigmacX = 600
 
-document.addEventListener("keydown", e => {
-  if ((e.code === "Space" || e.code === "ArrowUp") && !isJumping && isAlive) {
+function triggerJump() {
+  if (!isJumping && isAlive) {
     isJumping = true
     oleg.classList.add("jump")
     setTimeout(() => {
@@ -17,7 +17,25 @@ document.addEventListener("keydown", e => {
       isJumping = false
     }, 600)
   }
+}
+
+document.addEventListener("keydown", e => {
+  if ((e.code === "Space" || e.code === "ArrowUp") && !isJumping && isAlive) {
+    triggerJump()
+  }
 })
+
+// Pointer (preferred) and touch fallbacks so taps on iPad/mobile trigger a jump
+document.addEventListener("pointerdown", e => {
+  if ((e.pointerType === "touch" || e.pointerType === "pen") && !isJumping && isAlive) {
+    triggerJump()
+  }
+})
+
+document.addEventListener("touchstart", e => {
+  e.preventDefault()
+  if (!isJumping && isAlive) triggerJump()
+}, { passive: false })
 
 setInterval(() => {
   if (!isAlive) return
